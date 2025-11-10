@@ -17,3 +17,10 @@
 @theme {
   --color-primary: #3a86f5;
 }
+
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  background: transparent;
+}
