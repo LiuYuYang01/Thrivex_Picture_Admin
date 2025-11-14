@@ -1,15 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  FiSearch,
-  FiBell,
-  FiUser,
-  FiLogOut,
-  FiSettings,
-  FiMaximize2,
-  FiMinimize2,
-  FiChevronDown,
-} from 'react-icons/fi';
+import { FiSearch, FiBell, FiUser, FiLogOut, FiSettings, FiMaximize2, FiMinimize2, FiChevronDown } from 'react-icons/fi';
 import { useNavigate } from 'react-router';
 import { useUserStore } from '@/stores';
 
@@ -20,7 +11,7 @@ export default () => {
   const [notificationCount] = useState(3);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { quitLogin } = useUserStore();
+  const { user, quitLogin } = useUserStore();
 
   // 检测全屏状态
   useEffect(() => {
@@ -65,12 +56,7 @@ export default () => {
         {/* 左侧：搜索框 */}
         <div className="flex-1 max-w-md">
           <div className={`relative transition-all duration-300 ${isSearchFocused ? 'scale-105' : ''}`}>
-            <FiSearch
-              className={`absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors ${
-                isSearchFocused ? 'text-primary' : ''
-              }`}
-              size={18}
-            />
+            <FiSearch className={`absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors ${isSearchFocused ? 'text-primary' : ''}`} size={18} />
             <input
               type="text"
               placeholder="搜索功能、文件、用户..."
@@ -143,22 +129,12 @@ export default () => {
               className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-100 
                        transition-colors cursor-pointer"
             >
-              <div
-                className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-purple-600 
-                            flex items-center justify-center text-white font-semibold shadow-md"
-              >
-                A
-              </div>
+              <img src={user?.avatar} alt="" className="w-8 h-8 rounded-full" />
               <div className="hidden lg:block text-left">
-                <p className="text-sm font-semibold text-gray-800">Admin</p>
+                <p className="text-sm font-semibold text-gray-800">{user?.name || user?.username || ''}</p>
                 <p className="text-xs text-gray-500">管理员</p>
               </div>
-              <FiChevronDown
-                className={`hidden lg:block text-gray-400 transition-transform duration-200 ${
-                  isUserMenuOpen ? 'rotate-180' : ''
-                }`}
-                size={16}
-              />
+              <FiChevronDown className={`hidden lg:block text-gray-400 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} size={16} />
             </motion.button>
 
             {/* 用户下拉菜单 */}
@@ -175,15 +151,10 @@ export default () => {
                   {/* 用户信息 */}
                   <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-primary/5 to-purple-50">
                     <div className="flex items-center gap-3">
-                      <div
-                        className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-600 
-                                    flex items-center justify-center text-white font-semibold text-lg shadow-md"
-                      >
-                        A
-                      </div>
+                      <img src={user?.avatar} alt="" className="w-12 h-12 rounded-full" />
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-800 truncate">Admin</p>
-                        <p className="text-xs text-gray-500 truncate">admin@thrivex.com</p>
+                        <p className="font-semibold text-gray-800 truncate">{user?.name}</p>
+                        {/* <p className="text-xs text-gray-500 truncate">再渺小的星光，也有属于他的光芒！</p> */}
                       </div>
                     </div>
                   </div>

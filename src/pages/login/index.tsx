@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Input, Button } from '@heroui/react';
-import { FiUser, FiLock } from 'react-icons/fi';
+import { FiUser, FiLock, FiImage } from 'react-icons/fi';
 import { loginAPI } from '@/api';
 import { useUserStore } from '@/stores';
 import { notification, message } from 'antd';
@@ -10,6 +10,8 @@ import type { LoginParams } from '@/types/user';
 export default () => {
   const navigate = useNavigate();
   const setToken = useUserStore((state) => state.setToken);
+  const setUser = useUserStore((state) => state.setUser);
+  
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<LoginParams>({
     username: '',
@@ -40,6 +42,7 @@ export default () => {
       const { data } = await loginAPI(formData);
       if (data?.token) {
         setToken(data.token);
+        setUser(data.user);
         message.success(`欢迎回来，${data.user?.name || data.user?.username || ''}!`);
         navigate('/');
       }
@@ -62,6 +65,13 @@ export default () => {
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
           {/* 登录表单 */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="flex justify-center items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+                <FiImage className="text-white" size={20} />
+              </div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">ThriveX</h1>
+            </div>
+
             <div className="space-y-4">
               <Input
                 type="text"

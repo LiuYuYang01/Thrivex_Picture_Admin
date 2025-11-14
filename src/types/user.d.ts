@@ -11,6 +11,7 @@ export interface LoginResponse {
     id: number;
     name: string;
     username: string;
+    avatar: string;
     create_time: string;
   };
 }
