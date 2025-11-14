@@ -1,0 +1,81 @@
+import request from '@/utils/request';
+import type { Album, UpdateAlbumParams, QueryAlbumParams, ManagePhotosParams } from '@/types/album';
+import type { PagingData } from '@/types/common';
+import type { Photo } from '@/types/photo';
+
+/**
+ * 获取相册列表
+ * @param params 查询参数（分页、关键词搜索）
+ * @returns 分页的相册列表
+ */
+export const getAlbumListAPI = (params?: QueryAlbumParams) => {
+  return request<PagingData<Album>>('GET', '/web/album/list', {
+    params,
+  });
+};
+
+/**
+ * 获取相册详情
+ * @param id 相册ID
+ * @returns 相册详情（包含照片数量）
+ */
+export const getAlbumDetailAPI = (id: number) => {
+  return request<Album>('GET', `/web/album/${id}`);
+};
+
+/**
+ * 更新相册
+ * @param id 相册ID
+ * @param params 更新参数（名称、描述、封面）
+ * @returns 更新结果
+ */
+export const updateAlbumAPI = (id: number, params: UpdateAlbumParams) => {
+  return request<void>('PATCH', `/web/album/${id}`, {
+    data: params,
+  });
+};
+
+/**
+ * 删除相册
+ * @param id 相册ID
+ * @returns 删除结果
+ */
+export const deleteAlbumAPI = (id: number) => {
+  return request<void>('DELETE', `/web/album/${id}`);
+};
+
+/**
+ * 添加照片到相册
+ * @param id 相册ID
+ * @param params 照片ID数组
+ * @returns 添加结果
+ */
+export const addPhotosToAlbumAPI = (id: number, params: ManagePhotosParams) => {
+  return request<void>('POST', `/web/album/${id}/photos`, {
+    data: params,
+  });
+};
+
+/**
+ * 从相册移除照片
+ * @param id 相册ID
+ * @param params 照片ID数组
+ * @returns 移除结果
+ */
+export const removePhotosFromAlbumAPI = (id: number, params: ManagePhotosParams) => {
+  return request<void>('DELETE', `/web/album/${id}/photos`, {
+    data: params,
+  });
+};
+
+/**
+ * 分页查询相册中的照片
+ * @param id 相册ID
+ * @param params 分页参数
+ * @returns 分页的照片列表
+ */
+export const getAlbumPhotosAPI = (id: number, params?: { page?: number; limit?: number }) => {
+  return request<PagingData<Photo>>('GET', `/web/album/${id}/photos`, {
+    params,
+  });
+};
