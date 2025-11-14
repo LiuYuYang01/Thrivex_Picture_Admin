@@ -7,7 +7,7 @@ import type { Photo, CreatePhotoParams, UpdatePhotoParams } from '@/types/photo'
  * @returns 创建的照片信息
  */
 export const createPhotoAPI = (params: CreatePhotoParams) => {
-  return request<Photo>('POST', '/web/photo', {
+  return request<Photo>('POST', '/photo', {
     data: params,
   });
 };
@@ -18,7 +18,7 @@ export const createPhotoAPI = (params: CreatePhotoParams) => {
  * @returns 照片详情
  */
 export const getPhotoDetailAPI = (id: number) => {
-  return request<Photo>('GET', `/web/photo/${id}`);
+  return request<Photo>('GET', `/photo/${id}`);
 };
 
 /**
@@ -28,7 +28,7 @@ export const getPhotoDetailAPI = (id: number) => {
  * @returns 更新结果
  */
 export const updatePhotoAPI = (id: number, params: UpdatePhotoParams) => {
-  return request<void>('PATCH', `/web/photo/${id}`, {
+  return request<void>('PATCH', `/photo/${id}`, {
     data: params,
   });
 };
@@ -39,5 +39,5 @@ export const updatePhotoAPI = (id: number, params: UpdatePhotoParams) => {
  * @returns 删除结果
  */
 export const deletePhotoAPI = (id: number) => {
-  return request<void>('DELETE', `/web/photo/${id}`);
+  return request<void>('DELETE', `/photo/${id}`);
 };

@@ -17,7 +17,7 @@ export const uploadFileAPI = (params: UploadFileParams) => {
   // 添加相册ID
   formData.append('albumId', params.albumId.toString());
 
-  return request<UploadFileResponse[]>('POST', '/web/qiniu/upload', {
+  return request<UploadFileResponse[]>('POST', '/qiniu/upload', {
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data',

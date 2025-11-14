@@ -7,7 +7,7 @@ import type { LoginParams, LoginResponse } from '@/types/user';
  * @returns 登录响应（包含 token 和用户信息）
  */
 export const loginAPI = (params: LoginParams) => {
-  return request<LoginResponse>('POST', '/web/user/login', {
+  return request<LoginResponse>('POST', '/user/login', {
     data: params,
   });
 };

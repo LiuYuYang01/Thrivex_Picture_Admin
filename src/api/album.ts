@@ -9,7 +9,7 @@ import type { Photo } from '@/types/photo';
  * @returns 分页的相册列表
  */
 export const getAlbumListAPI = (params?: QueryAlbumParams) => {
-  return request<PagingData<Album>>('GET', '/web/album/list', {
+  return request<PagingData<Album>>('GET', '/album/list', {
     params,
   });
 };
@@ -20,7 +20,7 @@ export const getAlbumListAPI = (params?: QueryAlbumParams) => {
  * @returns 相册详情（包含照片数量）
  */
 export const getAlbumDetailAPI = (id: number) => {
-  return request<Album>('GET', `/web/album/${id}`);
+  return request<Album>('GET', `/album/${id}`);
 };
 
 /**
@@ -30,7 +30,7 @@ export const getAlbumDetailAPI = (id: number) => {
  * @returns 更新结果
  */
 export const updateAlbumAPI = (id: number, params: UpdateAlbumParams) => {
-  return request<void>('PATCH', `/web/album/${id}`, {
+  return request<void>('PATCH', `/album/${id}`, {
     data: params,
   });
 };
@@ -41,7 +41,7 @@ export const updateAlbumAPI = (id: number, params: UpdateAlbumParams) => {
  * @returns 删除结果
  */
 export const deleteAlbumAPI = (id: number) => {
-  return request<void>('DELETE', `/web/album/${id}`);
+  return request<void>('DELETE', `/album/${id}`);
 };
 
 /**
@@ -51,7 +51,7 @@ export const deleteAlbumAPI = (id: number) => {
  * @returns 添加结果
  */
 export const addPhotosToAlbumAPI = (id: number, params: ManagePhotosParams) => {
-  return request<void>('POST', `/web/album/${id}/photos`, {
+  return request<void>('POST', `/album/${id}/photos`, {
     data: params,
   });
 };
@@ -63,7 +63,7 @@ export const addPhotosToAlbumAPI = (id: number, params: ManagePhotosParams) => {
  * @returns 移除结果
  */
 export const removePhotosFromAlbumAPI = (id: number, params: ManagePhotosParams) => {
-  return request<void>('DELETE', `/web/album/${id}/photos`, {
+  return request<void>('DELETE', `/album/${id}/photos`, {
     data: params,
   });
 };
@@ -75,7 +75,7 @@ export const removePhotosFromAlbumAPI = (id: number, params: ManagePhotosParams)
  * @returns 分页的照片列表
  */
 export const getAlbumPhotosAPI = (id: number, params?: { page?: number; limit?: number }) => {
-  return request<PagingData<Photo>>('GET', `/web/album/${id}/photos`, {
+  return request<PagingData<Photo>>('GET', `/album/${id}/photos`, {
     params,
   });
 };

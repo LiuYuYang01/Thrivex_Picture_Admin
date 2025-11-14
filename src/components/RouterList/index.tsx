@@ -1,12 +1,41 @@
-import { BrowserRouter, Routes, Route } from 'react-router';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import Layout from '@/pages/layout';
 import Home from '@/pages/home';
+import Login from '@/pages/login';
+import { useUserStore } from '@/stores';
+
+// 路由守卫组件
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = useUserStore((state) => state.token);
+  return token ? <>{children}</> : <Navigate to="/login" replace />;
+};
+
+// 登录页面路由守卫（已登录则跳转到首页）
+const LoginRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = useUserStore((state) => state.token);
+  return token ? <Navigate to="/" replace /> : <>{children}</>;
+};
 
 export default () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route
+          path="/login"
+          element={
+            <LoginRoute>
+              <Login />
+            </LoginRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Home />} />
         </Route>
       </Routes>
