@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Card, Row, Col, Statistic, Button, Space, Empty } from 'antd';
+import { Card, Row, Col, Statistic } from 'antd';
 import { motion } from 'framer-motion';
-import { AiOutlineFolderOpen, AiOutlinePicture, AiOutlineUpload, AiOutlineArrowRight, AiOutlineHeart } from 'react-icons/ai';
+import { AiOutlineFolderOpen, AiOutlinePicture, AiOutlineUpload, AiOutlineArrowRight } from 'react-icons/ai';
 import { useNavigate } from 'react-router';
 import { getAlbumListAPI } from '@/api/album';
 import { getPhotoListAPI } from '@/api/photo';
@@ -136,70 +136,66 @@ export default () => {
       </Row>
 
       {/* 快捷操作 - 重新设计卡片 */}
-      <motion.div variants={itemVariants}>
-        <Card title={<span className="text-xl font-bold text-gray-800">🚀 快捷操作</span>} className="border-0 shadow-lg">
-          <Row gutter={[16, 16]}>
-            {quickActions.map((action, index) => (
-              <Col xs={24} sm={12} lg={8} key={action.path}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
-                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                  onClick={() => navigate(action.path)}
-                  className={`
+      <Row gutter={[16, 16]}>
+        {quickActions.map((action, index) => (
+          <Col xs={24} sm={12} lg={8} key={action.path}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 + index * 0.1 }}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              onClick={() => navigate(action.path)}
+              className={`
                     relative overflow-hidden rounded-2xl cursor-pointer group
                     bg-gradient-to-br ${action.bgGradient}
                     border-2 border-transparent hover:border-white
                     shadow-md ${action.hoverShadow} hover:shadow-2xl
                     transition-all duration-300
                   `}
-                >
-                  {/* 装饰性光效 */}
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-white rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity -translate-y-1/2 translate-x-1/2" />
+            >
+              {/* 装饰性光效 */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity -translate-y-1/2 translate-x-1/2" />
 
-                  <div className="relative z-10 p-8">
-                    {/* 图标容器 */}
-                    <motion.div
-                      className={`
+              <div className="relative z-10 p-8">
+                {/* 图标容器 */}
+                <motion.div
+                  className={`
                         w-16 h-16 rounded-2xl bg-gradient-to-br ${action.gradient}
                         flex items-center justify-center mb-6
                         shadow-lg group-hover:shadow-xl
                         group-hover:scale-110 transition-transform duration-300
                       `}
-                      whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <span className="text-white text-3xl">{action.icon}</span>
-                    </motion.div>
+                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <span className="text-white text-3xl">{action.icon}</span>
+                </motion.div>
 
-                    {/* 文本内容 */}
-                    <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-gray-900">{action.title}</h3>
-                    <p className="text-gray-600 mb-6 text-sm">{action.description}</p>
+                {/* 文本内容 */}
+                <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-gray-900">{action.title}</h3>
+                <p className="text-gray-600 mb-6 text-sm">{action.description}</p>
 
-                    {/* 按钮 */}
-                    <motion.div
-                      whileHover={{ x: 5 }}
-                      className={`
+                {/* 按钮 */}
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  className={`
                         inline-flex items-center gap-2 px-4 py-2 rounded-xl
                         bg-white shadow-md
                         ${action.iconColor} font-medium
                         group-hover:shadow-lg transition-all
                       `}
-                    >
-                      <span>前往</span>
-                      <AiOutlineArrowRight className="text-lg" />
-                    </motion.div>
-                  </div>
-
-                  {/* 底部装饰条 */}
-                  <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${action.gradient}`} />
+                >
+                  <span>前往</span>
+                  <AiOutlineArrowRight className="text-lg" />
                 </motion.div>
-              </Col>
-            ))}
-          </Row>
-        </Card>
-      </motion.div>
+              </div>
+
+              {/* 底部装饰条 */}
+              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${action.gradient}`} />
+            </motion.div>
+          </Col>
+        ))}
+      </Row>
     </motion.div>
   );
 };

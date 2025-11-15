@@ -51,7 +51,7 @@ export default () => {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-gray-200 shadow-sm">
+    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-gray-200 shadow-xs">
       <div className="h-16 flex items-center justify-between px-4 lg:px-6">
         {/* 左侧：搜索框 */}
         <div className="flex-1 max-w-md">

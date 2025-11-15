@@ -14,7 +14,6 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { id: 'home', label: '首页', icon: <FiHome />, path: '/' },
   { id: 'albums', label: '相册管理', icon: <FiFolder />, path: '/albums' },
-  { id: 'photos', label: '照片管理', icon: <FiImage />, path: '/photos' },
   { id: 'upload', label: '上传图片', icon: <FiUpload />, path: '/upload' },
 ];
 
