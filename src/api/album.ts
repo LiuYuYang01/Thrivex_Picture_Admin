@@ -1,7 +1,17 @@
 import request from '@/utils/request';
-import type { Album, UpdateAlbumParams, QueryAlbumParams, ManagePhotosParams } from '@/types/album';
-import type { PagingData } from '@/types/common';
+import type { Album, CreateAlbumParams, UpdateAlbumParams, QueryAlbumParams, ManagePhotosParams } from '@/types/album';
 import type { Photo } from '@/types/photo';
+
+/**
+ * 创建相册
+ * @param params 相册信息（名称、描述、封面）
+ * @returns 创建的相册信息
+ */
+export const createAlbumAPI = (params: CreateAlbumParams) => {
+  return request<Album>('POST', '/album', {
+    data: params,
+  });
+};
 
 /**
  * 获取相册列表
@@ -9,7 +19,7 @@ import type { Photo } from '@/types/photo';
  * @returns 分页的相册列表
  */
 export const getAlbumListAPI = (params?: QueryAlbumParams) => {
-  return request<PagingData<Album>>('GET', '/album/list', {
+  return request<Paginate<Album[]>>('GET', '/album/list', {
     params,
   });
 };
@@ -20,7 +30,7 @@ export const getAlbumListAPI = (params?: QueryAlbumParams) => {
  * @returns 相册详情（包含照片数量）
  */
 export const getAlbumDetailAPI = (id: number) => {
-  return request<Album>('GET', `/album/${id}`);
+  return request<Album>('GET', `/album/detail/${id}`);
 };
 
 /**
@@ -74,8 +84,8 @@ export const removePhotosFromAlbumAPI = (id: number, params: ManagePhotosParams)
  * @param params 分页参数
  * @returns 分页的照片列表
  */
-export const getAlbumPhotosAPI = (id: number, params?: { page?: number; limit?: number }) => {
-  return request<PagingData<Photo>>('GET', `/album/${id}/photos`, {
+export const getAlbumPhotosAPI = (id: number, params?: FilterParams) => {
+  return request<Paginate<Photo[]>>('GET', `/album/${id}/photos`, {
     params,
   });
 };

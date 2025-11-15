@@ -26,10 +26,3 @@ export interface CreatePhotoParams {
 export interface UpdatePhotoParams {
   name?: string;
 }
-
-export interface QueryPhotoParams {
-  page?: number;
-  limit?: number;
-  keyword?: string;
-}
-

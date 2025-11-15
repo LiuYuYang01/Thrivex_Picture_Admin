@@ -13,12 +13,23 @@ export const createPhotoAPI = (params: CreatePhotoParams) => {
 };
 
 /**
+ * 获取照片列表
+ * @param params 查询参数（分页、关键词搜索）
+ * @returns 分页的照片列表
+ */
+export const getPhotoListAPI = (params?: FilterParams & { keyword?: string }) => {
+  return request<Paginate<Photo[]>>('GET', '/photo/list', {
+    params,
+  });
+};
+
+/**
  * 获取照片详情
  * @param id 照片ID
  * @returns 照片详情
  */
 export const getPhotoDetailAPI = (id: number) => {
-  return request<Photo>('GET', `/photo/${id}`);
+  return request<Photo>('GET', `/photo/detail/${id}`);
 };
 
 /**

@@ -7,6 +7,11 @@ interface Response<T> {
   data: T;
 }
 
+interface FilterParams {
+  page?: number;
+  limit?: number;
+}
+
 interface Wall {
   id: number;
   name: string;

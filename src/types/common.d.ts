@@ -1,10 +1,12 @@
 // 通用类型
 
 // 分页响应类型
-export interface PagingData<T> {
-  items: T[];
-  total: number;
+interface Paginate<T> {
+  next: boolean;
+  prev: boolean;
   page: number;
   size: number;
+  pages: number;
+  total: number;
+  result: T;
 }
-

@@ -12,15 +12,128 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
+
+  /* 平滑滚动 */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 @theme {
   --color-primary: #3a86f5;
 }
 
-
+/* 美化滚动条 */
 ::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
   background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+/* Firefox 滚动条样式 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
+
+/* 选中文本的颜色 */
+::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: #1e40af;
+}
+
+::-moz-selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: #1e40af;
+}
+
+/* Ant Design 卡片美化 */
+.ant-card {
+  border-radius: 16px !important;
+  transition: all 0.3s ease !important;
+}
+
+.ant-card-head {
+  border-radius: 16px 16px 0 0 !important;
+}
+
+/* 按钮美化 */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #3a86f5 0%, #5a9ff7 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(58, 134, 245, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(58, 134, 245, 0.4) !important;
+}
+
+/* 输入框美化 */
+.ant-input, .ant-input-number, .ant-picker {
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.ant-input:focus, .ant-input-number:focus, .ant-picker:focus {
+  box-shadow: 0 0 0 3px rgba(58, 134, 245, 0.1) !important;
+}
+
+/* 模态框美化 */
+.ant-modal-content {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+
+/* 消息提示美化 */
+.ant-message-notice-content {
+  border-radius: 12px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* 表格美化 */
+.ant-table {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.ant-table-thead > tr > th {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  font-weight: 600 !important;
+}
+
+/* 加载动画优化 */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.loading-shimmer {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(to right, #f0f0f0 4%, #e0e0e0 25%, #f0f0f0 36%);
+  background-size: 1000px 100%;
 }
