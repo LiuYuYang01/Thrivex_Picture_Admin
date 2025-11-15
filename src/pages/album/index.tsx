@@ -94,7 +94,10 @@ export default () => {
       key: 'edit',
       label: <span className="text-[15px]">编辑</span>,
       icon: <AiOutlineEdit className="!text-xl" />,
-      onClick: () => handleOpenModal(album),
+      onClick: (e) => {
+        e?.domEvent?.stopPropagation();
+        handleOpenModal(album);
+      },
     },
     {
       type: 'divider',
@@ -104,7 +107,8 @@ export default () => {
       label: <span className="text-[15px]">删除</span>,
       icon: <AiOutlineDelete className="!text-xl" />,
       danger: true,
-      onClick: () => {
+      onClick: (e) => {
+        e?.domEvent?.stopPropagation();
         Modal.confirm({
           title: '确定删除此相册吗？',
           content: '删除后将无法恢复',
@@ -131,6 +135,7 @@ export default () => {
             创建相册
           </Button>
         }
+        className="[&_.ant-card-body]:min-h-[calc(100vh-180px)]"
       >
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -153,41 +158,42 @@ export default () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
               {albums.map((album) => (
                 <div key={album.id} className="relative group cursor-pointer" onClick={() => handleViewAlbum(album.id)}>
-                  <div className="bg-white rounded-xl p-4 md:p-5 transition-all duration-300 hover:-translate-y-1 border border-gray-100 overflow-hidden">
+                  <div className="bg-white rounded-xl !p-0.5 md:p-5 transition-all hover:-translate-y-1 hover:border hover:border-gray-100 overflow-hidden">
                     {/* 封面区域 */}
-                    <div className="flex flex-col items-center gap-3 mb-2">
+                    <div className="flex flex-col items-center gap-2 justify-center">
                       {album.cover ? (
-                        <div className="relative w-full aspect-square rounded-xl overflow-hidden shadow-md group-hover:shadow-lg transition-shadow duration-300">
-                          <img src={album.cover} alt={album.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                        <div className="relative w-full aspect-square rounded-xl overflow-hidden shadow-md group-hover:shadow-lg transition-shadow">
+                          <img src={album.cover} alt={album.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                         </div>
                       ) : (
-                        <div className="w-full aspect-square flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-xl shadow-inner">
-                          <AiOutlineFolderOpen style={{ fontSize: 'clamp(48px, 8vw, 72px)', color: '#3b82f6' }} className="drop-shadow-lg transition-transform duration-300 group-hover:scale-110" />
+                        <div className="w-full aspect-square flex items-center justify-center rounded-xl shadow-inner">
+                          <AiOutlineFolderOpen style={{ fontSize: 'clamp(48px, 8vw, 72px)', color: '#3b82f6' }} className="drop-shadow-lg transition-transform group-hover:scale-110" />
                         </div>
                       )}
 
                       {/* 相册名称和信息 */}
-                      <div className="text-center w-full min-h-[3rem] flex flex-col justify-center">
-                        <div className="font-semibold text-gray-800 truncate px-1 text-sm md:text-base group-hover:text-blue-600 transition-colors duration-200" title={album.name}>
-                          {album.name}
+                      <div className="flex justify-between items-center w-full pb-2">
+                        <div className="text-center w-full flex flex-col justify-center">
+                          <div className="text-gray-800 truncate px-1 !text-sm md:text-base group-hover:text-blue-500 transition-colors" title={album.name}>
+                            {album.name}
+                          </div>
+
+                          <div className="absolute bottom-[45px] right-2.5 backdrop-blur-xs shadow rounded-full px-2 py-1 text-xs text-white font-bold">{album.photo_count || 0}</div>
                         </div>
-                        <div className="text-xs text-gray-500 mt-1.5 flex items-center justify-center gap-1">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{album.photo_count || 0} 张</span>
+
+                        {/* 操作按钮 */}
+                        <div className="absolute bottom-[7px] right-2 border transition-all rounded-md hidden group-hover:block">
+                          <Dropdown menu={{ items: getMenuItems(album) }} trigger={['click']}>
+                            <Button type="text" size="small" icon={<AiOutlineEllipsis />} className="bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white hover:shadow-xl border-0" onClick={(e) => e.stopPropagation()} />
+                          </Dropdown>
                         </div>
                       </div>
-                    </div>
-
-                    {/* 操作按钮 */}
-                    <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-y-[-4px] group-hover:translate-y-0">
-                      <Dropdown menu={{ items: getMenuItems(album) }} trigger={['click']}>
-                        <Button type="text" size="small" icon={<AiOutlineEllipsis />} className="bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white hover:shadow-xl border-0" onClick={(e) => e.stopPropagation()} />
-                      </Dropdown>
                     </div>
                   </div>
 
                   {/* 描述信息（hover时显示） */}
                   {album.description && (
-                    <div className="absolute bottom-full left-0 right-0 mb-3 p-3 border bg-white backdrop-blur-sm text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10 transform translate-y-2 group-hover:translate-y-0">
+                    <div className="absolute bottom-full left-0 right-0 mb-3 p-3 border bg-white backdrop-blur-sm text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-10 transform translate-y-2 group-hover:translate-y-0">
                       <div className="line-clamp-3 leading-relaxed text-gray-700">{album.description}</div>
                       <div className="text-gray-400 mt-2 pt-2 border-t">创建于 {new Date(album.create_time).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                     </div>
