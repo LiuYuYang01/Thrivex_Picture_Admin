@@ -131,81 +131,87 @@ export default () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      {/* 上传配置区域 */}
-      <Card title="上传配置" className="mb-6">
-        <Space direction="vertical" style={{ width: '100%' }} size="large">
+    <div className="p-6 max-w-6xl mx-auto space-y-3">
+      {albums.length === 0 ? (
+        <Alert
+          message="暂无相册"
+          description={
+            <p>
+              <span>请先</span>
+              <a href="/albums" className="text-blue-500 ml-1">
+                创建相册
+              </a>
+            </p>
+          }
+          type="warning"
+          showIcon
+        />
+      ) : (
+        <div className="space-y-3">
+          {/* 上传配置区域 */}
           <div>
-            <label className="block mb-2 font-medium">选择目标相册</label>
-            {albums.length === 0 ? (
-              <Alert
-                message="暂无相册"
-                description={
-                  <span>
-                    请先
-                    <Button type="link" onClick={() => navigate('/albums')}>
-                      创建相册
-                    </Button>
+            <Card title="上传配置" className="mb-6">
+              <Space direction="vertical" style={{ width: '100%' }} size="large">
+                <div>
+                  <label className="block mb-2 font-medium">目标相册</label>
+
+                  <Select
+                    placeholder="请选择相册"
+                    value={selectedAlbumId}
+                    onChange={setSelectedAlbumId}
+                    style={{ width: '100%' }}
+                    size="large"
+                    options={albums.map((album) => ({
+                      label: (
+                        <Space>
+                          <span>{album.name}</span>
+                          <Tag color="blue">{album.photo_count || 0} 张</Tag>
+                        </Space>
+                      ),
+                      value: album.id,
+                    }))}
+                  />
+
+                  {selectedAlbumId && <Alert message="上传提示" description="支持拖拽上传，可一次选择多个文件。支持 JPG、PNG、GIF、WEBP 等格式，单个文件不超过 10MB。" type="info" showIcon className="!mt-3" />}
+                </div>
+              </Space>
+            </Card>
+          </div>
+
+          {/* 上传区域 */}
+          <div>
+            <Card title="选择文件" className="mb-6">
+              <Dragger multiple fileList={fileList} beforeUpload={beforeUpload} onChange={handleChange} onRemove={handleRemove} disabled={!selectedAlbumId || uploading} accept="image/*" listType="picture">
+                <div className="flex justify-center items-center">
+                  <AiOutlineInbox className="text-blue-500 text-6xl" />
+                </div>
+                <p className="ant-upload-text !my-3">点击或拖拽文件到此区域上传</p>
+              </Dragger>
+
+              {fileList.length > 0 && (
+                <div className="mt-6 flex justify-between items-center">
+                  <span className="text-gray-600">
+                    已选择 {fileList.length} 个文件，总大小：
+                    {(fileList.reduce((acc, file) => acc + (file.size || 0), 0) / 1024 / 1024).toFixed(2)} MB
                   </span>
-                }
-                type="warning"
-                showIcon
-              />
-            ) : (
-              <Select
-                placeholder="请选择相册"
-                value={selectedAlbumId}
-                onChange={setSelectedAlbumId}
-                style={{ width: '100%' }}
-                size="large"
-                options={albums.map((album) => ({
-                  label: (
-                    <Space>
-                      <span>{album.name}</span>
-                      <Tag color="blue">{album.photo_count || 0} 张</Tag>
-                    </Space>
-                  ),
-                  value: album.id,
-                }))}
-              />
-            )}
+                  <Space>
+                    <Button onClick={() => setFileList([])}>清空</Button>
+                    <Button type="primary" icon={<AiOutlineUpload />} onClick={handleUpload} loading={uploading} disabled={!selectedAlbumId}>
+                      开始上传
+                    </Button>
+                  </Space>
+                </div>
+              )}
+
+              {uploading && uploadProgress > 0 && (
+                <div className="mt-6">
+                  <Progress percent={uploadProgress} status={uploadProgress === 100 ? 'success' : 'active'} />
+                </div>
+              )}
+            </Card>
           </div>
-
-          {selectedAlbumId && <Alert message="上传提示" description="支持拖拽上传，可一次选择多个文件。支持 JPG、PNG、GIF、WEBP 等格式，单个文件不超过 10MB。" type="info" showIcon />}
-        </Space>
-      </Card>
-
-      {/* 上传区域 */}
-      <Card title="选择文件" className="mb-6">
-        <Dragger multiple fileList={fileList} beforeUpload={beforeUpload} onChange={handleChange} onRemove={handleRemove} disabled={!selectedAlbumId || uploading} accept="image/*" listType="picture">
-          <p className="ant-upload-drag-icon">
-            <AiOutlineInbox style={{ color: '#1890ff', fontSize: 64 }} />
-          </p>
-          <p className="ant-upload-text">点击或拖拽文件到此区域上传</p>
-          <p className="ant-upload-hint">支持单个或批量上传。严禁上传违法违规内容。</p>
-        </Dragger>
-
-        {fileList.length > 0 && (
-          <div className="mt-6 flex justify-between items-center">
-            <span className="text-gray-600">
-              已选择 {fileList.length} 个文件，总大小：
-              {(fileList.reduce((acc, file) => acc + (file.size || 0), 0) / 1024 / 1024).toFixed(2)} MB
-            </span>
-            <Space>
-              <Button onClick={() => setFileList([])}>清空</Button>
-              <Button type="primary" icon={<AiOutlineUpload />} onClick={handleUpload} loading={uploading} disabled={!selectedAlbumId}>
-                开始上传
-              </Button>
-            </Space>
-          </div>
-        )}
-
-        {uploading && uploadProgress > 0 && (
-          <div className="mt-6">
-            <Progress percent={uploadProgress} status={uploadProgress === 100 ? 'success' : 'active'} />
-          </div>
-        )}
-      </Card>
+        </div>
+      )}
 
       {/* 上传成功列表 */}
       {uploadedPhotos.length > 0 && (

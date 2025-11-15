@@ -126,7 +126,7 @@ export default () => {
       <Card
         title={
           <div className="flex items-center gap-2">
-            <AiOutlineFolderOpen style={{ fontSize: 20 }} />
+            <AiOutlineFolderOpen className="text-3xl" />
             <span className="text-xl font-semibold">相册管理</span>
           </div>
         }
