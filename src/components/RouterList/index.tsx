@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import Layout from '@/pages/layout';
 import Home from '@/pages/home';
 import Login from '@/pages/login';
-import Albums from '@/pages/albums';
-import AlbumDetail from '@/pages/albums/detail';
+import Albums from '@/pages/album';
+import AlbumDetail from '@/pages/album/detail';
 import Upload from '@/pages/upload';
 import { useUserStore } from '@/stores';
 

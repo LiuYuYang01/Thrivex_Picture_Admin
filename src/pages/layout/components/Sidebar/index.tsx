@@ -112,7 +112,7 @@ export default () => {
         </nav>
 
         {/* 底部用户信息 */}
-        {!isCollapsed && (
+        {/* {!isCollapsed && (
           <div className="p-4 border-t border-gray-200">
             <div className={`flex items-center gap-3 p-3 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer`}>
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-semibold">A</div>
@@ -123,7 +123,7 @@ export default () => {
               </motion.div>
             </div>
           </div>
-        )}
+        )} */}
       </motion.aside>
     </>
   );
