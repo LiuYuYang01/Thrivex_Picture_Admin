@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Image, message, Spin, Empty, Modal, Checkbox, Input, Space } from 'antd';
-import { AiOutlineArrowLeft, AiOutlinePlus, AiOutlineDelete, AiOutlineSearch } from 'react-icons/ai';
+import { AiOutlineArrowLeft, AiOutlinePlus, AiOutlineDelete, AiOutlineSearch, AiOutlineEdit } from 'react-icons/ai';
 import { useParams, useNavigate } from 'react-router';
 import { getAlbumDetailAPI, getAlbumPhotosAPI, addPhotosToAlbumAPI, removePhotosFromAlbumAPI } from '@/api/album';
-import { getPhotoListAPI } from '@/api/photo';
+import { getPhotoListAPI, updatePhotoAPI, deletePhotoAPI } from '@/api/photo';
 import type { Album } from '@/types/album';
 import type { Photo } from '@/types/photo';
 
@@ -17,6 +17,10 @@ export default () => {
   const [allPhotos, setAllPhotos] = useState<Photo[]>([]);
   const [selectedPhotoIds, setSelectedPhotoIds] = useState<number[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<Photo | null>(null);
+  const [editPhotoName, setEditPhotoName] = useState('');
+  const [editPhotoDescription, setEditPhotoDescription] = useState('');
 
   // 加载相册详情
   const loadAlbumDetail = async () => {
@@ -82,16 +86,81 @@ export default () => {
     }
   };
 
-  // 从相册移除照片
-  const handleRemovePhoto = async (photoId: number) => {
-    try {
-      await removePhotosFromAlbumAPI(Number(id), { photo_ids: [photoId] });
-      message.success('移除照片成功');
-      loadAlbumPhotos();
-      loadAlbumDetail();
-    } catch {
-      message.error('移除照片失败');
+  // 打开编辑照片弹窗
+  const handleEditPhoto = (photo: Photo) => {
+    setEditingPhoto(photo);
+    setEditPhotoName(photo.name);
+    setEditPhotoDescription(photo.description || '');
+    setIsEditModalOpen(true);
+  };
+
+  // 更新照片名称
+  const handleUpdatePhoto = async () => {
+    if (!editingPhoto) return;
+    if (!editPhotoName.trim()) {
+      message.warning('照片名称不能为空');
+      return;
     }
+    try {
+      await updatePhotoAPI(editingPhoto.id, { name: editPhotoName, description: editPhotoDescription });
+      message.success('修改照片名称成功');
+      setIsEditModalOpen(false);
+      setEditingPhoto(null);
+      setEditPhotoName('');
+      loadAlbumPhotos();
+    } catch {
+      message.error('修改照片名称失败');
+    }
+  };
+
+  // 删除照片（提供两种删除方式）
+  const handleDeletePhoto = (photo: Photo) => {
+    Modal.confirm({
+      title: '删除照片',
+      content: (
+        <div className="space-y-2">
+          <p className="text-gray-600"><b>从相册移除：</b>只从当前相册中移除，照片依然保留在系统中</p>
+          <p className="text-red-600"><b>彻底删除：</b>从系统中完全删除此照片（不可恢复）</p>
+        </div>
+      ),
+      okText: '彻底删除',
+      cancelText: '取消',
+      okType: 'danger',
+      maskClosable: true, // 允许点击遮罩层关闭
+      onCancel: () => {
+        Modal.destroyAll();
+      },
+      onOk: async () => {
+        try {
+          await deletePhotoAPI(photo.id);
+          message.success('照片已彻底删除');
+          loadAlbumPhotos();
+          loadAlbumDetail();
+        } catch {
+          message.error('删除照片失败');
+        }
+      },
+      footer: (_, { OkBtn }) => (
+        <div className="flex justify-end gap-2">
+          <Button
+            onClick={async () => {
+              Modal.destroyAll();
+              try {
+                await removePhotosFromAlbumAPI(Number(id), { photo_ids: [photo.id] });
+                message.success('已从相册中移除');
+                loadAlbumPhotos();
+                loadAlbumDetail();
+              } catch {
+                message.error('移除失败');
+              }
+            }}
+          >
+            从相册移除
+          </Button>
+          <OkBtn />
+        </div>
+      ),
+    });
   };
 
   // 筛选出不在当前相册中的照片
@@ -151,21 +220,28 @@ export default () => {
               }
             />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
               {photos.map((photo) => (
                 <div key={photo.id} className="relative group">
-                  <Image
-                    src={photo.url}
-                    alt={photo.name}
-                    className="w-full h-40 object-cover rounded-lg"
-                    preview={{
-                      mask: <div className="text-white">预览</div>,
-                    }}
-                  />
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button type="primary" danger size="small" icon={<AiOutlineDelete />} onClick={() => handleRemovePhoto(photo.id)} />
+                  <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-md hover:shadow-xl transition-all duration-300">
+                    <Image
+                      src={photo.url}
+                      alt={photo.name}
+                      className="!absolute !inset-0 !w-full !h-full !object-cover"
+                      wrapperClassName="!absolute !inset-0 !w-full !h-full"
+                      preview={{
+                        mask: <div className="text-white">预览</div>,
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none z-10" />
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-20">
+                      <Space>
+                        <Button size="small" icon={<AiOutlineEdit />} onClick={() => handleEditPhoto(photo)} className="shadow-lg" />
+                        <Button type="primary" size="small" icon={<AiOutlineDelete />} onClick={() => handleDeletePhoto(photo)} className="shadow-lg" />
+                      </Space>
+                    </div>
                   </div>
-                  <div className="mt-2 text-sm text-gray-600 truncate">{photo.name}</div>
+                  <div className="mt-2 text-sm text-gray-700 truncate px-1 font-medium">{photo.name}</div>
                 </div>
               ))}
             </div>
@@ -189,6 +265,7 @@ export default () => {
         <div className="mb-4">
           <Input placeholder="搜索照片名称" prefix={<AiOutlineSearch />} value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} allowClear />
         </div>
+
         {availablePhotos.length === 0 ? (
           <Empty description="没有可添加的照片" />
         ) : (
@@ -210,6 +287,32 @@ export default () => {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* 编辑照片弹窗 */}
+      <Modal
+        title="编辑照片"
+        open={isEditModalOpen}
+        onOk={handleUpdatePhoto}
+        onCancel={() => {
+          setIsEditModalOpen(false);
+          setEditingPhoto(null);
+          setEditPhotoName('');
+        }}
+        okText="保存"
+        cancelText="取消"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">照片名称</label>
+            <Input placeholder="请输入照片名称" value={editPhotoName} onChange={(e) => setEditPhotoName(e.target.value)} onPressEnter={handleUpdatePhoto} />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">照片描述</label>
+            <Input placeholder="请输入照片描述" value={editPhotoDescription} onChange={(e) => setEditPhotoDescription(e.target.value)} onPressEnter={handleUpdatePhoto} />
+          </div>
+        </div>
       </Modal>
     </div>
   );

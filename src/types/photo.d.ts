@@ -5,6 +5,7 @@ import type { Album } from './album';
 export interface Photo {
   id: number;
   name: string;
+  description?: string;
   url: string;
   size: number;
   width?: number;
@@ -16,6 +17,7 @@ export interface Photo {
 
 export interface CreatePhotoParams {
   name: string;
+  description?: string;
   url: string;
   size: number;
   width?: number;
@@ -25,4 +27,5 @@ export interface CreatePhotoParams {
 
 export interface UpdatePhotoParams {
   name?: string;
+  description?: string;
 }
