@@ -6,6 +6,7 @@ import { getAlbumDetailAPI, getAlbumPhotosAPI, addPhotosToAlbumAPI, removePhotos
 import { getPhotoListAPI, updatePhotoAPI, deletePhotoAPI } from '@/api/photo';
 import type { Album } from '@/types/album';
 import type { Photo } from '@/types/photo';
+import { Tooltip } from '@heroui/react';
 
 export default () => {
   const { id } = useParams<{ id: string }>();
@@ -119,8 +120,12 @@ export default () => {
       title: '删除照片',
       content: (
         <div className="space-y-2">
-          <p className="text-gray-600"><b>从相册移除：</b>只从当前相册中移除，照片依然保留在系统中</p>
-          <p className="text-red-600"><b>彻底删除：</b>从系统中完全删除此照片（不可恢复）</p>
+          <p className="text-gray-600">
+            <b>从相册移除：</b>只从当前相册中移除，照片依然保留在系统中
+          </p>
+          <p className="text-red-600">
+            <b>彻底删除：</b>从系统中完全删除此照片（不可恢复）
+          </p>
         </div>
       ),
       okText: '彻底删除',
@@ -222,27 +227,52 @@ export default () => {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
               {photos.map((photo) => (
-                <div key={photo.id} className="relative group">
-                  <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-md hover:shadow-xl transition-all duration-300">
-                    <Image
-                      src={photo.url}
-                      alt={photo.name}
-                      className="!absolute !inset-0 !w-full !h-full !object-cover"
-                      wrapperClassName="!absolute !inset-0 !w-full !h-full"
-                      preview={{
-                        mask: <div className="text-white">预览</div>,
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none z-10" />
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-20">
-                      <Space>
-                        <Button size="small" icon={<AiOutlineEdit />} onClick={() => handleEditPhoto(photo)} className="shadow-lg" />
-                        <Button type="primary" size="small" icon={<AiOutlineDelete />} onClick={() => handleDeletePhoto(photo)} className="shadow-lg" />
-                      </Space>
+                <Tooltip
+                  key={photo.id}
+                  content={
+                    photo.description ? (
+                      <div className="px-1 py-2 max-w-xs">
+                        <div className="text-small font-semibold mb-2">{photo.name}</div>
+                        <div className="text-tiny leading-relaxed mb-2">{photo.description}</div>
+                        <div className="text-tiny text-default-400 pt-2 border-t border-default-200">上传于 {new Date(photo.create_time).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                      </div>
+                    ) : (
+                      <div className="px-1 py-2">
+                        <div className="text-small font-semibold">{photo.name}</div>
+                        <div className="text-tiny text-default-400 mt-1">上传于 {new Date(photo.create_time).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                      </div>
+                    )
+                  }
+                  placement="top"
+                  delay={300}
+                  closeDelay={0}
+                  classNames={{
+                    base: 'max-w-md',
+                    content: 'bg-content1 border border-default-200 shadow-xl',
+                  }}
+                >
+                  <div className="relative group">
+                    <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-md hover:shadow-xl transition-all duration-300">
+                      <Image
+                        src={photo.url}
+                        alt={photo.name}
+                        className="!absolute !inset-0 !w-full !h-full !object-cover"
+                        wrapperClassName="!absolute !inset-0 !w-full !h-full"
+                        preview={{
+                          mask: <div className="text-white">预览</div>,
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none z-10" />
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-20">
+                        <Space>
+                          <Button size="small" icon={<AiOutlineEdit />} onClick={() => handleEditPhoto(photo)} className="shadow-lg" />
+                          <Button type="primary" size="small" icon={<AiOutlineDelete />} onClick={() => handleDeletePhoto(photo)} className="shadow-lg" />
+                        </Space>
+                      </div>
                     </div>
+                    <div className="mt-2 text-sm text-gray-700 truncate px-1 font-medium">{photo.name}</div>
                   </div>
-                  <div className="mt-2 text-sm text-gray-700 truncate px-1 font-medium">{photo.name}</div>
-                </div>
+                </Tooltip>
               ))}
             </div>
           )}

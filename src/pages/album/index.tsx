@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button, Modal, Form, Input, message, Card, Empty, Spin, Dropdown } from 'antd';
 import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete, AiOutlineFolderOpen, AiOutlineEllipsis } from 'react-icons/ai';
 import { useNavigate } from 'react-router';
+import { Tooltip } from '@heroui/react';
 import { getAlbumListAPI, createAlbumAPI, updateAlbumAPI, deleteAlbumAPI } from '@/api/album';
 import type { Album, CreateAlbumParams, UpdateAlbumParams } from '@/types/album';
 import type { MenuProps } from 'antd';
@@ -156,48 +157,65 @@ export default () => {
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
               {albums.map((album) => (
-                <div key={album.id} className="relative group cursor-pointer" onClick={() => handleViewAlbum(album.id)}>
-                  <div className="bg-white rounded-xl !p-0.5 md:p-5 transition-all hover:-translate-y-1 overflow-hidden">
-                    {/* 封面区域 */}
-                    <div className="flex flex-col items-center gap-2 justify-center">
-                      {album.cover ? (
-                        <div className="relative w-full aspect-square rounded-xl overflow-hidden shadow-md group-hover:shadow-lg transition-shadow">
-                          <img src={album.cover} alt={album.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
-                        </div>
-                      ) : (
-                        <div className="w-full aspect-square flex items-center justify-center rounded-xl shadow-inner">
-                          <AiOutlineFolderOpen style={{ fontSize: 'clamp(48px, 8vw, 72px)', color: '#3b82f6' }} className="drop-shadow-lg transition-transform group-hover:scale-110" />
-                        </div>
-                      )}
+                <Tooltip
+                  key={album.id}
+                  content={
+                    album.description ? (
+                      <div className="px-1 py-2 max-w-xs">
+                        <div className="text-small font-semibold mb-2">{album.name}</div>
+                        <div className="text-tiny leading-relaxed mb-2">{album.description}</div>
+                        <div className="text-tiny text-default-400 pt-2 border-t border-default-200">创建于 {new Date(album.create_time).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                      </div>
+                    ) : (
+                      <div className="px-1 py-2">
+                        <div className="text-small font-semibold">{album.name}</div>
+                        <div className="text-tiny text-default-400 mt-1">创建于 {new Date(album.create_time).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                      </div>
+                    )
+                  }
+                  placement="top"
+                  delay={300}
+                  closeDelay={0}
+                  classNames={{
+                    base: 'max-w-md',
+                    content: 'bg-content1 border border-default-200 shadow-xl',
+                  }}
+                >
+                  <div className="relative group cursor-pointer" onClick={() => handleViewAlbum(album.id)}>
+                    <div className="bg-white rounded-xl !p-0.5 md:p-5 transition-all hover:-translate-y-1 overflow-hidden">
+                      {/* 封面区域 */}
+                      <div className="flex flex-col items-center gap-2 justify-center">
+                        {album.cover ? (
+                          <div className="relative w-full aspect-square rounded-xl overflow-hidden shadow-md group-hover:shadow-lg transition-shadow">
+                            <img src={album.cover} alt={album.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                          </div>
+                        ) : (
+                          <div className="w-full aspect-square flex items-center justify-center rounded-xl shadow-inner">
+                            <AiOutlineFolderOpen style={{ fontSize: 'clamp(48px, 8vw, 72px)', color: '#3b82f6' }} className="drop-shadow-lg transition-transform group-hover:scale-110" />
+                          </div>
+                        )}
 
-                      {/* 相册名称和信息 */}
-                      <div className="flex justify-between items-center w-full pb-2">
-                        <div className="text-center w-full flex flex-col justify-center">
-                          <div className="text-gray-800 truncate px-1 !text-sm md:text-base group-hover:text-blue-500 transition-colors" title={album.name}>
-                            {album.name}
+                        {/* 相册名称和信息 */}
+                        <div className="flex justify-between items-center w-full pb-2">
+                          <div className="text-center w-full flex flex-col justify-center">
+                            <div className="text-gray-800 truncate px-1 !text-sm md:text-base group-hover:text-blue-500 transition-colors" title={album.name}>
+                              {album.name}
+                            </div>
+
+                            <div className="absolute bottom-[45px] right-2.5 backdrop-blur-xs shadow rounded-full px-2 py-1 text-xs text-white font-bold">{album.photo_count || 0}</div>
                           </div>
 
-                          <div className="absolute bottom-[45px] right-2.5 backdrop-blur-xs shadow rounded-full px-2 py-1 text-xs text-white font-bold">{album.photo_count || 0}</div>
-                        </div>
-
-                        {/* 操作按钮 */}
-                        <div className="absolute bottom-[7px] right-2 border transition-all rounded-md hidden group-hover:block">
-                          <Dropdown menu={{ items: getMenuItems(album) }} trigger={['click']}>
-                            <Button type="text" size="small" icon={<AiOutlineEllipsis />} className="bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white hover:shadow-xl border-0" onClick={(e) => e.stopPropagation()} />
-                          </Dropdown>
+                          {/* 操作按钮 */}
+                          <div className="absolute bottom-[7px] right-2 border transition-all rounded-md hidden group-hover:block">
+                            <Dropdown menu={{ items: getMenuItems(album) }} trigger={['click']}>
+                              <Button type="text" size="small" icon={<AiOutlineEllipsis />} className="bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white hover:shadow-xl border-0" onClick={(e) => e.stopPropagation()} />
+                            </Dropdown>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* 描述信息（hover时显示） */}
-                  {album.description && (
-                    <div className="absolute bottom-full left-0 right-0 mb-3 p-3 border bg-white backdrop-blur-sm text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-10 transform translate-y-2 group-hover:translate-y-0">
-                      <div className="line-clamp-3 leading-relaxed text-gray-700">{album.description}</div>
-                      <div className="text-gray-400 mt-2 pt-2 border-t">创建于 {new Date(album.create_time).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                    </div>
-                  )}
-                </div>
+                </Tooltip>
               ))}
             </div>
 
