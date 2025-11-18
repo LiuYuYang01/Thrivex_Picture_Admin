@@ -158,7 +158,7 @@ export default () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
               {albums.map((album) => (
                 <div key={album.id} className="relative group cursor-pointer" onClick={() => handleViewAlbum(album.id)}>
-                  <div className="bg-white rounded-xl !p-0.5 md:p-5 transition-all hover:-translate-y-1 hover:border hover:border-gray-100 overflow-hidden">
+                  <div className="bg-white rounded-xl !p-0.5 md:p-5 transition-all hover:-translate-y-1 overflow-hidden">
                     {/* 封面区域 */}
                     <div className="flex flex-col items-center gap-2 justify-center">
                       {album.cover ? (

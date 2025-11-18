@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Image, message, Spin, Empty, Modal, Checkbox, Input, Space, Tag, Breadcrumb, Descriptions } from 'antd';
-import { AiOutlineArrowLeft, AiOutlinePlus, AiOutlineDelete, AiOutlineSearch, AiOutlinePicture } from 'react-icons/ai';
+import { Card, Button, Image, message, Spin, Empty, Modal, Checkbox, Input, Space } from 'antd';
+import { AiOutlineArrowLeft, AiOutlinePlus, AiOutlineDelete, AiOutlineSearch } from 'react-icons/ai';
 import { useParams, useNavigate } from 'react-router';
 import { getAlbumDetailAPI, getAlbumPhotosAPI, addPhotosToAlbumAPI, removePhotosFromAlbumAPI } from '@/api/album';
 import { getPhotoListAPI } from '@/api/photo';
@@ -114,86 +114,64 @@ export default () => {
   }
 
   return (
-    <div className="p-6">
-      {/* 面包屑导航 */}
-      <Breadcrumb className="mb-4">
-        <Breadcrumb.Item>
-          <a onClick={() => navigate('/albums')}>相册管理</a>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>{album.name}</Breadcrumb.Item>
-      </Breadcrumb>
-
-      {/* 相册信息卡片 */}
-      <Card className="mb-6">
-        <div className="flex items-start gap-6">
-          {album.cover ? (
-            <Image src={album.cover} width={200} height={200} style={{ objectFit: 'cover', borderRadius: '8px' }} />
-          ) : (
-            <div className="w-[200px] h-[200px] bg-gray-200 rounded-lg flex items-center justify-center">
-              <AiOutlinePicture style={{ fontSize: 64, color: '#999' }} />
-            </div>
-          )}
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold mb-4">{album.name}</h1>
-            <Descriptions column={2}>
-              <Descriptions.Item label="照片数量">
-                <Tag color="blue">{album.photo_count || 0} 张</Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="创建时间">{new Date(album.create_time).toLocaleString('zh-CN')}</Descriptions.Item>
-              <Descriptions.Item label="描述" span={2}>
-                {album.description || '暂无描述'}
-              </Descriptions.Item>
-            </Descriptions>
+    <div className="space-y-2">
+      <div>
+        <Card className="[&>.ant-card-body]:!p-4 [&>.ant-card-body]:!py-2">
+          <div className="flex justify-between items-center">
+            <h1 className="text-lg font-bold">{album.name}</h1>
+            <span className="text-sm text-gray-500">{album.description}</span>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
 
       {/* 照片网格 */}
-      <Card
-        title={<span className="text-lg font-semibold">相册照片</span>}
-        extra={
-          <Space>
+      <div>
+        <Card
+          title={
             <Button icon={<AiOutlineArrowLeft />} onClick={() => navigate('/albums')}>
               返回
             </Button>
+          }
+          extra={
             <Button type="primary" icon={<AiOutlinePlus />} onClick={() => setIsAddModalOpen(true)}>
               添加照片
             </Button>
-          </Space>
-        }
-      >
-        {photos.length === 0 ? (
-          <Empty
-            description={
-              <span>
-                暂无照片，点击
-                <Button type="link" onClick={() => setIsAddModalOpen(true)}>
-                  添加照片
-                </Button>
-              </span>
-            }
-          />
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {photos.map((photo) => (
-              <div key={photo.id} className="relative group">
-                <Image
-                  src={photo.url}
-                  alt={photo.name}
-                  className="w-full h-40 object-cover rounded-lg"
-                  preview={{
-                    mask: <div className="text-white">预览</div>,
-                  }}
-                />
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button type="primary" danger size="small" icon={<AiOutlineDelete />} onClick={() => handleRemovePhoto(photo.id)} />
+          }
+          className="[&_.ant-card-body]:min-h-[calc(100vh-235px)]"
+        >
+          {photos.length === 0 ? (
+            <Empty
+              description={
+                <span>
+                  暂无照片，点击
+                  <Button type="link" onClick={() => setIsAddModalOpen(true)}>
+                    添加照片
+                  </Button>
+                </span>
+              }
+            />
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {photos.map((photo) => (
+                <div key={photo.id} className="relative group">
+                  <Image
+                    src={photo.url}
+                    alt={photo.name}
+                    className="w-full h-40 object-cover rounded-lg"
+                    preview={{
+                      mask: <div className="text-white">预览</div>,
+                    }}
+                  />
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button type="primary" danger size="small" icon={<AiOutlineDelete />} onClick={() => handleRemovePhoto(photo.id)} />
+                  </div>
+                  <div className="mt-2 text-sm text-gray-600 truncate">{photo.name}</div>
                 </div>
-                <div className="mt-2 text-sm text-gray-600 truncate">{photo.name}</div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
+              ))}
+            </div>
+          )}
+        </Card>
+      </div>
 
       {/* 添加照片弹窗 */}
       <Modal

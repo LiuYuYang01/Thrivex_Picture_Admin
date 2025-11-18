@@ -45,23 +45,8 @@ instance.interceptors.request.use(
 // 响应拦截
 instance.interceptors.response.use(
   (res: AxiosResponse) => {
-    // 只要code不等于200, 就相当于响应失败
-    if (res.data?.code !== 200) {
-      notification.error({
-        message: '错误',
-        description: res.data?.message || '未知错误',
-      });
-
-      return Promise.reject(res.data);
-    }
-
-    return res.data;
-  },
-  (err: AxiosError) => {
-    if (isHandling401Error) return;
-
     // 如果code为401就证明认证失败
-    if (err.config?.data?.code === 401) {
+    if (res.data?.code === 401) {
       isHandling401Error = true; // 标记为正在处理401错误
 
       Modal.error({
@@ -78,8 +63,23 @@ instance.interceptors.response.use(
       // 取消后续的所有请求
       source.cancel('认证失败，取消所有请求');
 
-      return Promise.reject(err.config?.data);
+      return Promise.reject(res.data);
     }
+
+    // 只要code不等于200, 就相当于响应失败
+    if (res.data?.code !== 200) {
+      notification.error({
+        message: '错误',
+        description: res.data?.message || '未知错误',
+      });
+
+      return Promise.reject(res.data);
+    }
+
+    return res.data;
+  },
+  (err: AxiosError) => {
+    if (isHandling401Error) return;
 
     notification.error({
       message: '程序异常',
