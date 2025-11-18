@@ -20,10 +20,18 @@ export default () => {
   const navigate = useNavigate();
   const [albums, setAlbums] = useState<Album[]>([]);
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null);
+  const [quality, setQuality] = useState<number>(100);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadedPhotos, setUploadedPhotos] = useState<UploadedPhoto[]>([]);
+  const qualityOptions = [
+    { label: '原图 (100)', value: 100 },
+    { label: '高清 (90)', value: 90 },
+    { label: '均衡 (80)', value: 80 },
+    { label: '压缩 (70)', value: 70 },
+    { label: '极致压缩 (60)', value: 60 },
+  ];
 
   // 加载相册列表
   const loadAlbums = async () => {
@@ -89,7 +97,50 @@ export default () => {
       setUploading(true);
       setUploadProgress(0);
 
-      const files = fileList.map((file) => file.originFileObj as File);
+      const originalFiles = fileList.map((file) => file.originFileObj as File);
+
+      // 如果需要压缩，先压缩所有图片
+      let filesToUpload: File[] = [];
+
+      if (quality < 100) {
+        message.loading({ content: '正在压缩图片...', key: 'compressing', duration: 0 });
+
+        try {
+          // 并行压缩所有图片
+          const compressPromises = originalFiles.map(async (file, index) => {
+            try {
+              const compressed = await compressImage(file, quality);
+              // 更新压缩进度
+              const progress = Math.floor(((index + 1) / originalFiles.length) * 30);
+              setUploadProgress(progress);
+              return compressed;
+            } catch (error) {
+              console.error(`压缩 ${file.name} 失败:`, error);
+              // 如果压缩失败，使用原图
+              return file;
+            }
+          });
+
+          filesToUpload = await Promise.all(compressPromises);
+
+          // 计算压缩率
+          const originalSize = originalFiles.reduce((acc, file) => acc + file.size, 0);
+          const compressedSize = filesToUpload.reduce((acc, file) => acc + file.size, 0);
+          const ratio = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+
+          message.destroy('compressing');
+          message.success(`图片压缩完成，压缩率: ${ratio}%`);
+        } catch {
+          message.destroy('compressing');
+          message.warning('部分图片压缩失败，将使用原图上传');
+          filesToUpload = originalFiles;
+        }
+      } else {
+        filesToUpload = originalFiles;
+      }
+
+      // 上传图片
+      setUploadProgress(30);
 
       // 模拟上传进度
       const progressInterval = setInterval(() => {
@@ -103,7 +154,7 @@ export default () => {
       }, 200);
 
       const result = await uploadFileAPI({
-        files,
+        files: filesToUpload,
         albumId: selectedAlbumId,
       });
 
@@ -118,7 +169,8 @@ export default () => {
       setTimeout(() => {
         setUploadProgress(0);
       }, 2000);
-    } catch {
+    } catch (error) {
+      console.error('上传失败:', error);
       message.error('上传失败，请重试');
     } finally {
       setUploading(false);
@@ -128,6 +180,75 @@ export default () => {
   // 清空已上传列表
   const handleClearUploaded = () => {
     setUploadedPhotos([]);
+  };
+
+  /**
+   * 压缩图片
+   * @param file 原始文件
+   * @param quality 压缩质量 (0-100)
+   * @returns 压缩后的文件
+   */
+  const compressImage = (file: File, quality: number): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      // 如果是原图质量，直接返回原文件
+      if (quality === 100) {
+        resolve(file);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = (e) => {
+        const img = document.createElement('img');
+        img.src = e.target?.result as string;
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          if (!ctx) {
+            reject(new Error('无法获取 canvas context'));
+            return;
+          }
+
+          // 设置 canvas 尺寸为图片原始尺寸
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          // 绘制图片到 canvas
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // 转换为 blob
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error('图片压缩失败'));
+                return;
+              }
+
+              // 创建新的 File 对象
+              const compressedFile = new File([blob], file.name, {
+                type: file.type || 'image/jpeg',
+                lastModified: Date.now(),
+              });
+
+              resolve(compressedFile);
+            },
+            file.type || 'image/jpeg',
+            quality / 100
+          );
+        };
+
+        img.onerror = () => {
+          reject(new Error('图片加载失败'));
+        };
+      };
+
+      reader.onerror = () => {
+        reject(new Error('文件读取失败'));
+      };
+    });
   };
 
   return (
@@ -173,6 +294,11 @@ export default () => {
                   />
 
                   {selectedAlbumId && <Alert message="上传提示" description="支持拖拽上传，可一次选择多个文件。支持 JPG、PNG、GIF、WEBP 等格式，单个文件不超过 10MB。" type="info" showIcon className="!mt-3" />}
+                </div>
+                <div>
+                  <label className="block mb-2 font-medium">输出质量</label>
+                  <Select placeholder="请选择输出质量" value={quality} onChange={setQuality} style={{ width: '100%' }} size="large" options={qualityOptions} />
+                  <p className="text-sm text-gray-500 mt-2">不选择或 100 表示原图，数值越高越清晰，越低越模糊，可用于节省空间。</p>
                 </div>
               </Space>
             </Card>
@@ -226,7 +352,7 @@ export default () => {
           extra={
             <Space>
               <Button onClick={() => navigate(`/albums/${selectedAlbumId}`)}>查看相册</Button>
-              <Button icon={<AiOutlineDelete />} onClick={handleClearUploaded}>
+              <Button type="primary" danger icon={<AiOutlineDelete />} onClick={handleClearUploaded}>
                 清空列表
               </Button>
             </Space>

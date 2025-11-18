@@ -15,4 +15,3 @@ export interface UploadFileResponse {
   type: string;
   create_time: string;
 }
-
