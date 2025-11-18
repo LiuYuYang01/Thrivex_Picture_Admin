@@ -225,7 +225,7 @@ export default () => {
           }
           extra={
             <Space>
-              <Button onClick={() => navigate('/photos')}>查看所有照片</Button>
+              <Button onClick={() => navigate(`/albums/${selectedAlbumId}`)}>查看相册</Button>
               <Button icon={<AiOutlineDelete />} onClick={handleClearUploaded}>
                 清空列表
               </Button>
