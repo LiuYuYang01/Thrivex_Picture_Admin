@@ -7,6 +7,7 @@ import { getPhotoListAPI, updatePhotoAPI, deletePhotoAPI } from '@/api/photo';
 import type { Album } from '@/types/album';
 import type { Photo } from '@/types/photo';
 import { Tooltip } from '@heroui/react';
+import UploadPanel from '@/components/Upload';
 
 export default () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +20,7 @@ export default () => {
   const [selectedPhotoIds, setSelectedPhotoIds] = useState<number[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<Photo | null>(null);
   const [editPhotoName, setEditPhotoName] = useState('');
   const [editPhotoDescription, setEditPhotoDescription] = useState('');
@@ -201,15 +203,14 @@ export default () => {
       {/* 照片网格 */}
       <div>
         <Card
-          title={
-            <Button icon={<AiOutlineArrowLeft />} onClick={() => navigate('/albums')}>
-              返回
-            </Button>
-          }
+          title={<Button icon={<AiOutlineArrowLeft />} onClick={() => navigate('/albums')} />}
           extra={
-            <Button type="primary" icon={<AiOutlinePlus />} onClick={() => setIsAddModalOpen(true)}>
-              添加照片
-            </Button>
+            <Space size={10}>
+              <Button onClick={() => setIsAddModalOpen(true)}>添加照片</Button>
+              <Button type="primary" onClick={() => setIsUploadModalOpen(true)}>
+                上传照片
+              </Button>
+            </Space>
           }
           className="[&_.ant-card-body]:min-h-[calc(100vh-235px)]"
         >
@@ -343,6 +344,18 @@ export default () => {
             <Input placeholder="请输入照片描述" value={editPhotoDescription} onChange={(e) => setEditPhotoDescription(e.target.value)} onPressEnter={handleUpdatePhoto} />
           </div>
         </div>
+      </Modal>
+
+      {/* 上传照片弹窗 */}
+      <Modal title="上传照片" open={isUploadModalOpen} onCancel={() => setIsUploadModalOpen(false)} footer={null} width={600}>
+        <UploadPanel
+          albumId={album?.id ?? null}
+          onUploaded={() => {
+            setIsUploadModalOpen(false);
+            loadAlbumPhotos();
+            loadAlbumDetail();
+          }}
+        />
       </Modal>
     </div>
   );
