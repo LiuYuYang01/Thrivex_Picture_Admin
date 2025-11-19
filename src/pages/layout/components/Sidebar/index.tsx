@@ -65,7 +65,7 @@ export default () => {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
                 <FiImage className="text-white" size={20} />
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">ThriveX</h1>
+              <h1 className="text-xl font-bold text-primary bg-clip-text">ThriveX</h1>
             </motion.div>
           )}
 
@@ -89,7 +89,7 @@ export default () => {
                     className={`
                       flex items-center gap-3 px-4 py-3 rounded-xl
                       transition-all duration-200 group relative overflow-hidden
-                      ${isActive ? 'bg-gradient-to-r from-primary to-blue-600 text-white shadow-lg shadow-blue-200' : 'text-gray-700 hover:bg-gray-100'}
+                      ${isActive ? 'bg-gradient-to-r from-primary to-[#4060ff] text-white shadow-lg shadow-blue-200' : 'text-gray-700 hover:bg-gray-100'}
                     `}
                   >
                     {/* 图标 */}
