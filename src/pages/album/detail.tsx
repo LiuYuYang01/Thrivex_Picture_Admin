@@ -23,6 +23,7 @@ export default () => {
   const [availablePhotosTotal, setAvailablePhotosTotal] = useState(0);
   const [selectedPhotoIds, setSelectedPhotoIds] = useState<number[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<Photo | null>(null);
@@ -65,7 +66,7 @@ export default () => {
       const { data } = await getPhotosExcludeFromAlbumAPI(Number(id), {
         page,
         limit,
-        keyword: searchKeyword || undefined,
+        keyword: debouncedKeyword || undefined,
       });
       setAvailablePhotos(data.result);
       setAvailablePhotosTotal(data.total);
@@ -82,9 +83,18 @@ export default () => {
   }, [id]);
 
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedKeyword(searchKeyword.trim());
+    }, 300);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchKeyword]);
+
+  useEffect(() => {
     if (!isAddModalOpen) return;
     loadAvailablePhotos(availablePhotosPage, availablePhotosLimit);
-  }, [isAddModalOpen, searchKeyword, availablePhotosPage, availablePhotosLimit]);
+  }, [isAddModalOpen, debouncedKeyword, availablePhotosPage, availablePhotosLimit]);
 
   // 添加照片到相册
   const handleAddPhotos = async () => {
@@ -452,7 +462,7 @@ export default () => {
                       setSelectedPhotoIds((prev) => (prev.includes(photo.id) ? prev.filter((id) => id !== photo.id) : [...prev, photo.id]));
                     }}
                   >
-                    <img src={photo.url} alt={photo.name} className="w-full h-32 object-cover" />
+                    <img src={photo.url} alt={photo.name} className="w-full h-24 object-cover" />
                     <Checkbox
                       checked={selectedPhotoIds.includes(photo.id)}
                       className="absolute top-2 right-2"
