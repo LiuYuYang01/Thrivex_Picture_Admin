@@ -89,3 +89,15 @@ export const getAlbumPhotosAPI = (id: number, params?: FilterParams) => {
     params,
   });
 };
+
+/**
+ * 查询未加入当前相册的照片（分页）
+ * @param id 相册ID
+ * @param params 分页参数，如 { page, limit }
+ * @returns 分页的照片列表，排除已在相册内的照片
+ */
+export const getPhotosExcludeFromAlbumAPI = (id: number, params?: FilterParams) => {
+  return request<Paginate<Photo[]>>('GET', `/album/${id}/photos/exclude`, {
+    params,
+  });
+};

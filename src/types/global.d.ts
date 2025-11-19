@@ -10,6 +10,7 @@ interface Response<T> {
 interface FilterParams {
   page?: number;
   limit?: number;
+  keyword?: string;
 }
 
 interface Wall {

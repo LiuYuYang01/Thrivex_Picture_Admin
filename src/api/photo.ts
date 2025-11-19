@@ -45,10 +45,12 @@ export const updatePhotoAPI = (id: number, params: UpdatePhotoParams) => {
 };
 
 /**
- * 删除照片
- * @param id 照片ID
+ * 删除照片，支持批量
+ * @param ids 需要删除的照片ID数组
  * @returns 删除结果
  */
-export const deletePhotoAPI = (id: number) => {
-  return request<void>('DELETE', `/photo/${id}`);
+export const deletePhotoAPI = (ids: number[]) => {
+  return request<void>('DELETE', `/photo`, {
+    data: { ids },
+  });
 };
