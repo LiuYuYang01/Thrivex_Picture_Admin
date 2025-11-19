@@ -287,12 +287,12 @@ export default () => {
           title={<Button icon={<AiOutlineArrowLeft />} onClick={() => navigate('/albums')} />}
           extra={
             <Space size={10}>
+              <Button type={isBulkSelectMode ? 'primary' : 'default'} danger={isBulkSelectMode} onClick={toggleBulkSelectMode}>
+                {isBulkSelectMode ? '退出批量' : '批量选择'}
+              </Button>
               <Button onClick={() => setIsAddModalOpen(true)}>添加照片</Button>
               <Button type="primary" onClick={() => setIsUploadModalOpen(true)}>
                 上传照片
-              </Button>
-              <Button type={isBulkSelectMode ? 'primary' : 'default'} danger={isBulkSelectMode} onClick={toggleBulkSelectMode}>
-                {isBulkSelectMode ? '退出批量' : '批量选择'}
               </Button>
             </Space>
           }
@@ -388,7 +388,7 @@ export default () => {
                           {isBulkSelectMode && (
                             <Checkbox
                               checked={isSelected}
-                              className="absolute top-2 left-2 z-30 bg-white/80 px-1 py-0.5 rounded"
+                              className="absolute top-2 right-2"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toggleAlbumPhotoSelection(photo.id);
@@ -397,7 +397,7 @@ export default () => {
                           )}
                           {isBulkSelectMode && isSelected && <div className="absolute inset-0 bg-blue-500/10 z-10" />}
                         </div>
-                        <div className="mt-2 text-sm text-gray-700 truncate px-1 font-medium">{photo.name}</div>
+                        <div className={`mt-2 text-sm text-gray-700 truncate px-1 font-medium ${isSelected && '!text-primary'}`}>{photo.name}</div>
                       </div>
                     </Tooltip>
                   );
