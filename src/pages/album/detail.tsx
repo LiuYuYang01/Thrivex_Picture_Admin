@@ -9,6 +9,14 @@ import type { Photo } from '@/types/photo';
 import { Tooltip } from '@heroui/react';
 import UploadPanel from '@/components/Upload';
 
+// 去除?imageView2/1/w/300/h/300显示原图
+const getOriginalImageUrl = (url: string) => {
+  if (!url) return '';
+  const [base, query] = url.split('?');
+  if (!query) return url;
+  return query.startsWith('imageView2/1/') ? base : url;
+};
+
 export default () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -52,7 +60,7 @@ export default () => {
   const loadAlbumPhotos = async () => {
     if (!id) return;
     try {
-      const { data } = await getAlbumPhotosAPI(Number(id), { page: 1, limit: 100 });
+      const { data } = await getAlbumPhotosAPI(Number(id), { page: 1, limit: 100, width: 300, height: 300 });
       setPhotos(data.result);
     } catch {
       message.error('加载照片列表失败');
@@ -67,6 +75,8 @@ export default () => {
       const { data } = await getPhotosExcludeFromAlbumAPI(Number(id), {
         page,
         limit,
+        width: 300,
+        height: 300,
         keyword: debouncedKeyword || undefined,
       });
       setAvailablePhotos(data.result);
@@ -401,6 +411,7 @@ export default () => {
                                 ? false
                                 : {
                                     mask: <div className="text-white">预览</div>,
+                                    src: getOriginalImageUrl(photo.url),
                                   }
                             }
                           />

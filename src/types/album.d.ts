@@ -24,13 +24,12 @@ export interface UpdateAlbumParams {
   cover?: string;
 }
 
-export interface QueryAlbumParams {
-  page?: number;
-  limit?: number;
+export interface QueryAlbumParams extends FilterParams {
+  width?: number;
+  height?: number;
   keyword?: string;
 }
 
 export interface ManagePhotosParams {
   photo_ids: number[];
 }
-
