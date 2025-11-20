@@ -6,6 +6,7 @@ import { Tooltip } from '@heroui/react';
 import { getAlbumListAPI, createAlbumAPI, updateAlbumAPI, deleteAlbumAPI } from '@/api/album';
 import type { Album, CreateAlbumParams, UpdateAlbumParams } from '@/types/album';
 import type { MenuProps } from 'antd';
+import FileSvg from '@/assets/svg/file.svg';
 
 const { TextArea } = Input;
 
@@ -190,8 +191,8 @@ export default () => {
                             <img src={album.cover} alt={album.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                           </div>
                         ) : (
-                          <div className="w-full aspect-square flex items-center justify-center rounded-xl shadow-inner">
-                            <AiOutlineFolderOpen style={{ fontSize: 'clamp(48px, 8vw, 72px)', color: '#3b82f6' }} className="drop-shadow-lg transition-transform group-hover:scale-110" />
+                          <div className="w-full aspect-square flex items-center justify-center">
+                            <img src={FileSvg} alt="" />
                           </div>
                         )}
 
@@ -202,7 +203,7 @@ export default () => {
                               {album.name}
                             </div>
 
-                            <div className="absolute bottom-[45px] right-2.5 backdrop-blur-xs shadow rounded-full px-2 py-1 text-xs text-white font-bold">{album.photo_count || 0}</div>
+                            {album.cover && <div className="absolute bottom-[45px] right-2.5 backdrop-blur-xs shadow rounded-full px-2 py-1 text-xs text-white font-bold">{album.photo_count || 0}</div>}
                           </div>
 
                           {/* 操作按钮 */}

@@ -25,7 +25,7 @@ let isHandling401Error = false;
 instance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // 获取token
-    const token = JSON.parse(localStorage.getItem('user_storage') || '{}')?.state.token;
+    const token = JSON.parse(localStorage.getItem('user_storage') || '{}')?.state?.token;
 
     // 如果有token就把赋值给请求头
     if (token) config.headers['Authorization'] = `Bearer ${token}`;

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiHome, FiImage, FiFolder, FiUpload, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiFolder, FiUpload, FiMenu, FiX } from 'react-icons/fi';
 import { Link, useLocation } from 'react-router';
 import { BiLeftIndent, BiRightIndent } from 'react-icons/bi';
+import LogoSvg from '@/assets/svg/logo.svg';
 
 interface MenuItem {
   id: string;
@@ -59,10 +60,12 @@ export default () => {
         `}
       >
         {/* Logo 区域 */}
-        <div className={`h-16 flex items-center ${isMobileOpen ? 'justify-center' : 'justify-between'} ${isCollapsed ? 'justify-center' : 'justify-between'} px-4 border-b border-gray-200`}>
+        <div className={`h-16 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} px-4 border-b border-gray-200`}>
+          <span></span>
+
           {!isCollapsed && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-primary bg-clip-text">ThriveX</h1>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <img src={LogoSvg} alt="" className="w-10" />
             </motion.div>
           )}
 
