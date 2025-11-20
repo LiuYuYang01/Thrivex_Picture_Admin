@@ -22,5 +22,6 @@ export const uploadFileAPI = (params: UploadFileParams) => {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+    timeout: 0,
   });
 };

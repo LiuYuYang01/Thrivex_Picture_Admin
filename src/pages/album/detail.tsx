@@ -32,6 +32,7 @@ export default () => {
   const [isBulkSelectMode, setIsBulkSelectMode] = useState(false);
   const [selectedAlbumPhotoIds, setSelectedAlbumPhotoIds] = useState<number[]>([]);
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
+  const isAllAlbumPhotosSelected = photos.length > 0 && selectedAlbumPhotoIds.length === photos.length;
 
   // 加载相册详情
   const loadAlbumDetail = async () => {
@@ -95,6 +96,10 @@ export default () => {
     if (!isAddModalOpen) return;
     loadAvailablePhotos(availablePhotosPage, availablePhotosLimit);
   }, [isAddModalOpen, debouncedKeyword, availablePhotosPage, availablePhotosLimit]);
+
+  useEffect(() => {
+    setSelectedAlbumPhotoIds((prev) => prev.filter((id) => photos.some((photo) => photo.id === id)));
+  }, [photos]);
 
   // 添加照片到相册
   const handleAddPhotos = async () => {
@@ -235,6 +240,14 @@ export default () => {
     });
   };
 
+  const handleToggleSelectAllAlbumPhotos = () => {
+    if (isAllAlbumPhotosSelected) {
+      setSelectedAlbumPhotoIds([]);
+      return;
+    }
+    setSelectedAlbumPhotoIds(photos.map((photo) => photo.id));
+  };
+
   const handleBulkDeletePhotos = () => {
     if (selectedAlbumPhotoIds.length === 0) {
       message.warning('请选择要删除的照片');
@@ -323,8 +336,13 @@ export default () => {
             <>
               {isBulkSelectMode && (
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-2">
-                  <div className="text-sm text-gray-700">
-                    已选择 <span className="font-semibold">{selectedAlbumPhotoIds.length}</span> 张照片
+                  <div className="flex items-center gap-3 text-sm text-gray-700">
+                    <span>
+                      已选择 <span className="font-semibold">{selectedAlbumPhotoIds.length}</span> 张照片
+                    </span>
+                    <Button type="link" size="small" onClick={handleToggleSelectAllAlbumPhotos}>
+                      {isAllAlbumPhotosSelected ? '取消全选' : '全选'}
+                    </Button>
                   </div>
                   <Space>
                     <Button onClick={handleBulkRemovePhotos} loading={bulkActionLoading} disabled={selectedAlbumPhotoIds.length === 0}>
