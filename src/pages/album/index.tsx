@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, Modal, Form, Input, message, Card, Empty, Spin, Dropdown } from 'antd';
-import { AiOutlineEdit, AiOutlineDelete, AiOutlineFolderOpen, AiOutlineEllipsis } from 'react-icons/ai';
+import { AiOutlineEdit, AiOutlineDelete, AiOutlineEllipsis } from 'react-icons/ai';
 import { useNavigate } from 'react-router';
 import { Tooltip } from '@heroui/react';
 import { getAlbumListAPI, createAlbumAPI, updateAlbumAPI, deleteAlbumAPI } from '@/api/album';
