@@ -58,9 +58,9 @@ export default () => {
       message.error('只能上传图片文件！');
       return Upload.LIST_IGNORE;
     }
-    const isLt20M = file.size / 1024 / 1024 < 20;
-    if (!isLt20M) {
-      message.error('图片大小不能超过 20MB！');
+    const isLt30M = file.size / 1024 / 1024 < 30;
+    if (!isLt30M) {
+      message.error('图片大小不能超过 30MB！');
       return Upload.LIST_IGNORE;
     }
     return false; // 阻止自动上传
@@ -293,7 +293,7 @@ export default () => {
                     }))}
                   />
 
-                  {selectedAlbumId && <Alert message="上传提示" description="支持拖拽上传，可一次选择多个文件。支持 JPG、PNG、GIF、WEBP 等格式，单个文件不超过 20MB。" type="info" showIcon className="!mt-3" />}
+                  {selectedAlbumId && <Alert message="上传提示" description="支持拖拽上传，可一次选择多个文件。支持 JPG、PNG、GIF、WEBP 等格式，单个文件不超过 30MB。" type="info" showIcon className="!mt-3" />}
                 </div>
                 <div>
                   <label className="block mb-2 font-medium">输出质量</label>

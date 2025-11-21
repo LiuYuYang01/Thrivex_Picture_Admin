@@ -336,9 +336,9 @@ export default () => {
               description={
                 <span>
                   暂无照片，点击
-                  <Button type="link" onClick={() => setIsAddModalOpen(true)}>
+                  <span className="text-primary cursor-pointer ml-1" onClick={() => setIsAddModalOpen(true)}>
                     添加照片
-                  </Button>
+                  </span>
                 </span>
               }
             />
